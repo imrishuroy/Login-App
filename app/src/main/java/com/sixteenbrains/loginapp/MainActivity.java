@@ -1,11 +1,14 @@
 package com.sixteenbrains.loginapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,14 +20,33 @@ import com.parse.ParseUser;
 
 import android.content.Intent;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnKeyListener,View.OnClickListener {
 
     EditText email , password;
     TextView signInTextView;
+    ConstraintLayout layout;
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.layout){
+            InputMethodManager inputMethodManager =(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),0);
+        }
 
 
+    }
 
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
 
+        if(keyCode == KeyEvent.KEYCODE_ENTER && event.getDeviceId() == KeyEvent.ACTION_DOWN){
+            Intent intent = new Intent(MainActivity.this,SignUpActivity.class);
+            startActivity(intent);
+
+        }
+
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password= findViewById(R.id.password);
         signInTextView = findViewById(R.id.signInTextView);
+        layout = findViewById(R.id.layout);
+
+        password.setOnKeyListener(this);  // for advance keyboard management
+        layout.setOnClickListener(this);
 
         if(ParseUser.getCurrentUser() != null){
             Intent intent = new Intent(MainActivity.this,HomeActivity.class);
